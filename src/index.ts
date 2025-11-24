@@ -1,13 +1,42 @@
 import { fetchProductCatalog, fetchProductReviews, fetchSalesReport } from "./apiSimulator.ts";
+import { NetworkError, DataError } from "./CustomError.ts";
 
-// Write a Function to Handle API Calls and Display Data:
+function handleApiAndDisplay() {
+    fetchProductCatalog()
+        .then((products) => {
+            console.log("products:", products);
 
-// Use fetchProductCatalog() to fetch product details and display them.
-// For each product, fetch the reviews using fetchProductReviews(productId).
-// After fetching products and reviews, retrieve the sales report using fetchSalesReport().
+            const reviewPromises = products.map((product) =>
+                fetchProductReviews(product.id)
+                    .then((reviews) => ({
+                        id: product.id,
+                        reviews,
+                    }))
+                    .catch((error) => {
+                        console.error(`Failed to fetch reviews for product ${product.id}:`, error);
+                        return { id: product.id, reviews: [] };
+                    })
+            );
 
-// Implement Error Handling Using Promises:
+            return Promise.all(reviewPromises);
+        })
+        .then((productReviews) => {
+            console.log("productReviews:", productReviews);
+            return fetchSalesReport();
+        })
+        .then((salesReport) => {
+            console.log("Sales report:", salesReport);
+        })
+        .catch((error) => {
+            if (error instanceof NetworkError || error instanceof DataError) {
+                console.error("Failed to fetch product catalog:", error);
+            } else {
+                console.error("Unexpected error while fetching data:", error);
+            }
+        })
+        .finally(() => {
+            console.log("all API calls have been attempted.");
+        });
+}
 
-// Use.catch() to handle any errors from fetchProductCatalog(), fetchProductReviews(), and fetchSalesReport().
-// Display error messages to the console if any of the calls fail.
-// Use.finally() to log a message indicating that all API calls have been attempted.
+handleApiAndDisplay();
