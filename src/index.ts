@@ -1,4 +1,4 @@
-import { fetchProductCatalog } from "./apiSimulator.ts";
+import { fetchProductCatalog, fetchProductReviews, fetchSalesReport } from "./apiSimulator.ts";
 
 // Write a Function to Handle API Calls and Display Data:
 
