@@ -24,14 +24,19 @@ export const fetchProductCatalog = (): Promise<{ id: number; name: string; price
 export const fetchProductReviews = (productId: number): Promise<string[]> => {
     return new Promise((resolve, reject) => {
         setTimeout(() => {
-            const simulateNetworkIssue = false;
+            const roll = Math.random();
             const reviews = [
                 "It's great!",
                 "It's decent.",
             ];
 
-            if (simulateNetworkIssue) {
+            if (roll < 0.1) {
                 reject(new NetworkError(`Failed to fetch reviews for product ID ${productId}`));
+                return;
+            }
+
+            if (roll < 0.2) {
+                reject(new DataError(`Reviews for product ID ${productId} were malformed.`));
                 return;
             }
 
@@ -49,11 +54,16 @@ export const fetchProductReviews = (productId: number): Promise<string[]> => {
 export const fetchSalesReport = (): Promise<{ totalSales: number, unitsSold: number, averagePrice: number }> => {
     return new Promise((resolve, reject) => {
         setTimeout(() => {
-            const simulateNetworkIssue = false;
+            const roll = Math.random();
             const report = { totalSales: 4, unitsSold: 3, averagePrice: 3 };
 
-            if (simulateNetworkIssue) {
+            if (roll < 0.1) {
                 reject(new NetworkError("Failed to fetch sales report"));
+                return;
+            }
+
+            if (roll < 0.2) {
+                reject(new DataError("Sales report failed to parse."));
                 return;
             }
 
